@@ -271,10 +271,12 @@ if(NOT CONFIG_BOOT_SIGNATURE_KEY_FILE STREQUAL "")
   elseif((DEFINED CONF_DIR) AND
 	 (EXISTS ${CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE}))
     set(KEY_FILE ${CONF_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
-  else()
+  elseif(IS_ABSOLUTE $ENV{MCUBOOT_SIGNATURE_KEY_FILE})
+  set(KEY_FILE $ENV{MCUBOOT_SIGNATURE_KEY_FILE})
+    else()
     set(KEY_FILE ${MCUBOOT_DIR}/${CONFIG_BOOT_SIGNATURE_KEY_FILE})
   endif()
-  message("MCUBoot bootloader key file: ${KEY_FILE}")
+  message("MCUBoot bootloader key file:${KEY_FILE}")
 
   set(GENERATED_PUBKEY ${ZEPHYR_BINARY_DIR}/autogen-pubkey.c)
   add_custom_command(
