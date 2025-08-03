@@ -7,10 +7,6 @@ on:
 
 name: Mynewt
 
-concurrency:
-  group: mynewt-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   environment:
     runs-on: ubuntu-latest

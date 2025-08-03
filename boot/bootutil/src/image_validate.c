@@ -85,9 +85,6 @@ bootutil_img_hash(struct enc_key_data *enc_state, int image_index,
     (void)blk_sz;
     (void)off;
     (void)rc;
-    (void)fap;
-    (void)tmp_buf;
-    (void)tmp_buf_sz;
 #endif
 #endif
 
@@ -116,9 +113,7 @@ bootutil_img_hash(struct enc_key_data *enc_state, int image_index,
     size += hdr->ih_protect_tlv_size;
 
 #ifdef MCUBOOT_RAM_LOAD
-    bootutil_sha256_update(&sha256_ctx,
-                           (void*)(IMAGE_RAM_BASE + hdr->ih_load_addr),
-                           size);
+    bootutil_sha256_update(&sha256_ctx,(void*)(hdr->ih_load_addr), size);
 #else
     for (off = 0; off < size; off += blk_sz) {
         blk_sz = size - off;
@@ -247,7 +242,7 @@ bootutil_find_key(uint8_t image_index, uint8_t *key, uint16_t key_len)
 
     rc = boot_retrieve_public_key_hash(image_index, key_hash, &key_hash_size);
     if (rc) {
-        return -1;
+        return rc;
     }
 
     /* Adding hardening to avoid this potential attack:
@@ -268,6 +263,7 @@ bootutil_find_key(uint8_t image_index, uint8_t *key, uint16_t key_len)
 #endif /* !MCUBOOT_HW_KEY */
 #endif
 
+#ifdef MCUBOOT_HW_ROLLBACK_PROT
 /**
  * Reads the value of an image's security counter.
  *
@@ -327,6 +323,7 @@ bootutil_get_img_security_cnt(struct image_header *hdr,
 
     return 0;
 }
+#endif /* MCUBOOT_HW_ROLLBACK_PROT */
 
 /*
  * Verify the integrity of the image.
@@ -373,11 +370,6 @@ bootutil_img_validate(struct enc_key_data *enc_state, int image_index,
 
     rc = bootutil_tlv_iter_begin(&it, hdr, fap, IMAGE_TLV_ANY, false);
     if (rc) {
-        goto out;
-    }
-
-    if (it.tlv_end > bootutil_max_image_size(fap)) {
-        rc = -1;
         goto out;
     }
 

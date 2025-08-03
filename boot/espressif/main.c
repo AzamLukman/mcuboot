@@ -13,6 +13,8 @@
 #include "bootloader_utility.h"
 #include "bootloader_random.h"
 
+#include "esp_assert.h"
+
 #ifdef CONFIG_MCUBOOT_SERIAL
 #include "boot_serial/boot_serial.h"
 #include "serial_adapter/serial_adapter.h"
@@ -99,9 +101,6 @@ int main()
         FIH_PANIC;
     }
 
-    BOOT_LOG_INF("Enabling RNG early entropy source...");
-    bootloader_random_enable();
-
     /* Rough steps for a first boot when Secure Boot and/or Flash Encryption are still disabled on device:
      * Secure Boot:
      *   1) Calculate the SHA-256 hash digest of the public key and write to EFUSE.
@@ -142,13 +141,11 @@ int main()
     }
 #endif
 
-    BOOT_LOG_INF("*** Booting MCUboot build %s ***", MCUBOOT_VER);
-
     os_heap_init();
 
     struct boot_rsp rsp;
 
-    fih_int fih_rc = FIH_FAILURE;
+    FIH_DECLARE(fih_rc, FIH_FAILURE);
 
 #ifdef CONFIG_MCUBOOT_SERIAL
     boot_console_init();
@@ -166,7 +163,7 @@ int main()
      * the load information for booting the main image
      */
     FIH_CALL(boot_go, fih_rc, &rsp);
-    if (fih_not_eq(fih_rc, FIH_SUCCESS)) {
+    if (FIH_NOT_EQ(fih_rc, FIH_SUCCESS)) {
         BOOT_LOG_ERR("Unable to find bootable image");
 #ifdef CONFIG_SECURE_BOOT
         esp_efuse_batch_write_cancel();

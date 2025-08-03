@@ -5,9 +5,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <zephyr/kernel.h>
-#include <zephyr/devicetree.h>
-#include <zephyr/drivers/flash.h>
+#include <zephyr.h>
+#include <drivers/flash.h>
 
 #include "target.h"
 
@@ -16,21 +15,27 @@
 
 #include "bootutil/bootutil_log.h"
 
-BOOT_LOG_MODULE_DECLARE(mcuboot);
+MCUBOOT_LOG_MODULE_DECLARE(mcuboot);
 
-#if (!defined(CONFIG_XTENSA) && DT_HAS_CHOSEN(zephyr_flash_controller))
+#if (!defined(CONFIG_XTENSA) && defined(DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL))
 #define FLASH_DEVICE_ID SOC_FLASH_0_ID
 #define FLASH_DEVICE_BASE CONFIG_FLASH_BASE_ADDRESS
-#define FLASH_DEVICE_NODE DT_CHOSEN(zephyr_flash_controller)
-#elif (defined(CONFIG_XTENSA) && DT_NODE_EXISTS(DT_INST(0, jedec_spi_nor)))
+#elif (defined(CONFIG_XTENSA) && defined(DT_JEDEC_SPI_NOR_0_LABEL))
 #define FLASH_DEVICE_ID SPI_FLASH_0_ID
 #define FLASH_DEVICE_BASE 0
-#define FLASH_DEVICE_NODE DT_INST(0, jedec_spi_nor)
 #else
 #error "FLASH_DEVICE_ID could not be determined"
 #endif
 
-static const struct device *flash_dev = DEVICE_DT_GET(FLASH_DEVICE_NODE);
+static const struct device *flash_dev;
+
+const struct device *flash_device_get_binding(char *dev_name)
+{
+    if (!flash_dev) {
+        flash_dev = device_get_binding(dev_name);
+    }
+    return flash_dev;
+}
 
 int flash_device_base(uint8_t fd_id, uintptr_t *ret)
 {
@@ -88,30 +93,6 @@ int flash_area_id_to_image_slot(int area_id)
     return flash_area_id_to_multi_image_slot(0, area_id);
 }
 
-#if defined(CONFIG_MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD)
-int flash_area_id_from_direct_image(int image_id)
-{
-    switch (image_id) {
-    case 0:
-    case 1:
-        return FIXED_PARTITION_ID(slot0_partition);
-#if FIXED_PARTITION_EXISTS(slot1_partition)
-    case 2:
-        return FIXED_PARTITION_ID(slot1_partition);
-#endif
-#if FIXED_PARTITION_EXISTS(slot2_partition)
-    case 3:
-        return FIXED_PARTITION_ID(slot2_partition);
-#endif
-#if FIXED_PARTITION_EXISTS(slot3_partition)
-    case 4:
-        return FIXED_PARTITION_ID(slot3_partition);
-#endif
-    }
-    return -EINVAL;
-}
-#endif
-
 int flash_area_sector_from_off(off_t off, struct flash_sector *sector)
 {
     int rc;
@@ -126,12 +107,6 @@ int flash_area_sector_from_off(off_t off, struct flash_sector *sector)
     sector->fs_size = page.size;
 
     return rc;
-}
-
-uint8_t flash_area_get_device_id(const struct flash_area *fa)
-{
-	(void)fa;
-	return FLASH_DEVICE_ID;
 }
 
 #define ERASED_VAL 0xff

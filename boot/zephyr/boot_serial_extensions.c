@@ -4,16 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/flash.h>
-#include <zephyr/mgmt/mcumgr/zephyr_groups.h>
+#include <zephyr/mgmt/mcumgr/mgmt/mgmt_defines.h>
+#include <zephyr/mgmt/mcumgr/grp/zephyr/zephyr_basic.h>
+#include <../subsys/mgmt/mcumgr/transport/include/mgmt/mcumgr/transport/smp_internal.h>
 
 #include <flash_map_backend/flash_map_backend.h>
 #include <sysflash/sysflash.h>
 
 #include "bootutil/bootutil_log.h"
 #include "../boot_serial/src/boot_serial_priv.h"
-#include "../boot_serial/src/zcbor_encode.h"
+#include <zcbor_encode.h>
 
 #include "bootutil/image.h"
 #include "bootutil/bootutil_public.h"
@@ -140,7 +143,7 @@ int bs_peruser_system_specific(const struct nmgr_hdr *hdr, const char *buffer,
 {
     int mgmt_rc = MGMT_ERR_ENOTSUP;
 
-    if (hdr->nh_group == ZEPHYR_MGMT_GRP_BASE) {
+    if (hdr->nh_group == ZEPHYR_MGMT_GRP_BASIC) {
         if (hdr->nh_op == NMGR_OP_WRITE) {
 #ifdef CONFIG_BOOT_MGMT_CUSTOM_STORAGE_ERASE
             if (hdr->nh_id == ZEPHYR_MGMT_GRP_BASIC_CMD_ERASE_STORAGE) {

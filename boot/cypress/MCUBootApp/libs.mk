@@ -47,6 +47,7 @@ SOURCES_HAL += $(THIS_APP_PATH)/psoc6hal/COMPONENT_PSOC6HAL/source/cyhal_hwmgr.c
 
 # MbedTLS source files
 SOURCES_MBEDTLS := $(wildcard $(MBEDTLS_PATH)/mbedtls/library/*.c)
+SOURCES_MBEDTLS += $(wildcard $(MBEDTLS_PATH)/mbedtls/crypto/library/*.c)
 
 # Collected source files for libraries
 SOURCES_LIBS += $(SOURCES_HAL)
@@ -67,8 +68,8 @@ INCLUDE_DIRS_HAL += $(THIS_APP_PATH)/psoc6hal/COMPONENT_PSOC6HAL/include/pin_pac
 # MbedTLS related include directories
 INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/include
 INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/include/mbedtls
-INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/include/psa
-INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/library
+INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/crypto/include
+INCLUDE_DIRS_MBEDTLS += $(MBEDTLS_PATH)/mbedtls/crypto/include/mbedtls
 
 # Watchdog related includes
 INCLUDE_DIRS_WATCHDOG := $(THIS_APP_PATH)/watchdog

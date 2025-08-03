@@ -1,4 +1,4 @@
-## MCUboot test plan
+## mcuboot test plan
 
 The current target for running the tests is the Freedom K64F board.
 
@@ -12,7 +12,7 @@ For the 3 algorithms supported, rsa, ec and ec256, two files are provided:
 key_<sign-algo>.pem, key_<sign-algo>_2.pem. And a keys file with the C public
 key data for key_<sign-algo>.pem.
 
-Build and load MCUboot:
+Build and load mcuboot:
 
 * `newt build k64f_boot_<sign-algo>`
 * `newt load k64f_boot_<sign-algo>`
@@ -22,15 +22,10 @@ Build and load good image in slot 0:
 * `newt create-image k64f_blinky 1.0.1 key_<sign-algo>.pem`
 * `newt load k64f_blinky`
 
----
-***Note***
-
-*If testing RSA/PSS `newt create-image` needs to be passed in the extra*
-*flag `--rsa-pss` eg:*
+NOTE: If testing RSA/PSS `newt create-image` needs to be passed in the extra
+flag `--rsa-pss` eg:
 
 `newt create-image k64f_blinky 1.0.1 key_rsa.pem --rsa-pss`
-
----
 
 Build and load image in slot 1 with no signing, signed with
 key_<sign-algo>_2.pem and signed with key_<sign-algo>.pem. Mark each one as
@@ -46,7 +41,7 @@ key_<sign-algo>.pem. Both others should be erased.
 
 FIXME: this is currently not functional, skip this section!
 
-Build and load MCUboot:
+Build and load mcuboot:
 
 * `newt build k64f_boot_rsa_ec`
 * `newt load k64f_boot_rsa_ec`
@@ -73,7 +68,7 @@ And load
 
 ### Overwrite only functionality
 
-Build/load MCUboot:
+Build/load mcuboot:
 
 * `newt build k64f_boot_rsa_noswap`
 * `newt load k64f_boot_rsa_noswap`
@@ -97,7 +92,7 @@ be empty.
 
 ### Validate slot 0 option
 
-Build/load MCUboot:
+Build/load mcuboot:
 
 * `newt build k64f_boot_rsa_validate0`
 * `newt load k64f_boot_rsa_validate0`
@@ -125,7 +120,7 @@ Build signed image with *valid* key:
 DISCLAIMER: be careful with copy/paste of commands, this test uses another
 target/app!
 
-Build/load MCUboot:
+Build/load mcuboot:
 
 * `newt build k64f_boot_rsa`
 * `newt load k64f_boot_rsa`

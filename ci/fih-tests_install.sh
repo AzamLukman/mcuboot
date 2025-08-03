@@ -18,15 +18,13 @@ set -e
 
 DOCKER_DIR=docker
 
-IMAGE=fih-test:0.0.2
+IMAGE=fih-test:0.0.1
 
 CACHED_IMAGE=$DOCKER_DIR/$IMAGE
 
 [[ -f $CACHED_IMAGE ]] && (gzip -dc $CACHED_IMAGE | docker load)
 
 if [[ $? -ne 0 ]]; then
-    docker pull mcuboot/$IMAGE
-    if [[ $GITHUB_ACTIONS != true ]]; then
-        docker save mcuboot/$IMAGE | gzip > $CACHED_IMAGE
-    fi
+  docker pull mcuboot/$IMAGE
+  docker save mcuboot/$IMAGE | gzip > $CACHED_IMAGE
 fi

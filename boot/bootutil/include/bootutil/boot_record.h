@@ -18,7 +18,6 @@
 #define __BOOT_RECORD_H__
 
 #include <stdint.h>
-#include <stddef.h>
 #include "bootutil/image.h"
 
 #ifdef __cplusplus

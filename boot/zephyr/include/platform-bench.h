@@ -23,7 +23,7 @@
 #include "bootutil/bootutil_log.h"
 
 /* TODO: Unclear if this can be here (redundantly). */
-BOOT_LOG_MODULE_DECLARE(mcuboot);
+MCUBOOT_LOG_MODULE_DECLARE(mcuboot);
 
 typedef uint32_t bench_state_t;
 

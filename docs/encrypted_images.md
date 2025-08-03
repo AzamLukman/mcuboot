@@ -24,7 +24,7 @@
 ## [Rationale](#rationale)
 
 To provide confidentiality of image data while in transport to the
-device or while residing on an external flash, `MCUboot` has support
+device or while residing on an external flash, `MCUBoot` has support
 for encrypting/decrypting images on-the-fly while upgrading.
 
 The image header needs to flag this image as `ENCRYPTED` (0x04) and
@@ -84,7 +84,7 @@ are the results of applying the given operations over the AES-CTR key.
 
 ECIES follows a well defined protocol to generate an encryption key. There are
 multiple standards which differ only on which building blocks are used; for
-MCUboot we settled on some primitives that are easily found on our crypto
+MCUBoot we settled on some primitives that are easily found on our crypto
 libraries. The whole key encryption can be summarized as:
 
 * Generate a new private key and derive the public key; when using ECIES-P256
@@ -112,7 +112,7 @@ artifacts while ECIES-X25519 is named ENC_X25519.
 
 ## [Upgrade process](#upgrade-process)
 
-When starting a new upgrade process, `MCUboot` checks that the image in the
+When starting a new upgrade process, `MCUBoot` checks that the image in the
 `secondary slot` has the `ENCRYPTED` flag set and has the required TLV with the
 encrypted key. It then uses its internal private/secret key to decrypt
 the TLV containing the key. Given that no errors are found, it will then
@@ -132,13 +132,8 @@ presence of the `ENCRYPTED` flag and the key TLV. If those are present the
 sectors are re-encrypted when copying from the `primary slot` to
 the `secondary slot`.
 
----
-***Note***
-
-*Each encrypted image must have its own key TLV that should be unique*
-*and used only for this particular image.*
-
----
+PS: Each encrypted image must have its own key TLV that should be unique
+and used only for this particular image.
 
 Also when swap method is employed, the sizes of both images are saved to
 the status area just before starting the upgrade process, because it
@@ -152,9 +147,8 @@ occurs and the information is spread across multiple areas.
 or `ed25519`. This will generate a keypair or private key.
 
 To extract the public key in source file form, use
-`imgtool getpub -k <input.pem> -e <encoding>`, where `encoding` can be one of
-`lang-c` or `lang-rust` (defaults to `lang-c`). To extract a public key in PEM
-format, use `imgtool getpub -k <input.pem> -e pem`.
+`imgtool getpub -k <input.pem> -l <lang>`, where lang can be one of `c` or
+`rust` (defaults to `c`).
 
 If using AES-KW, follow the steps in the next section to generate the
 required keys.
